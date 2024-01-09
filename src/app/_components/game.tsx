@@ -8,7 +8,7 @@ import BoardPieces from "./boardPieces";
 
 function Game() {
   const [game, setGame] = useState(
-    new Minesweeper({ row: 20, col: 30, bombs: 120 }),
+    new Minesweeper({ row: 20, col: 30, bombs: 10 }),
   );
   useEffect(() => {
     console.log(game);
@@ -34,6 +34,7 @@ function Game() {
       className="flex select-none flex-col"
       onContextMenu={(e) => e.preventDefault()}
     >
+      {game.isOver()}
       <div className="flex ">
         <div className="h-[10px] w-[10px] bg-[url('/borders/cornertopleft.png')]" />
         {(game.board()[0] as piece[]).map((_, i) => {

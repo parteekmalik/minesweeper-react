@@ -65,8 +65,9 @@ class Minesweeper {
   private _totalBombs: number = 0;
   private _row = 0;
   private _col = 0;
-  private _isOver = false;
+  private _isOver: "" | "won" | "lose" = "";
   private _isinit = false;
+  private _revealCount = 0;
   constructor({
     row,
     col,
@@ -87,6 +88,15 @@ class Minesweeper {
       this.populateBomb(this._totalBombs, { row, col }),
     );
   }
+  isOver() {
+    return this._isOver;
+  }
+  private updateOver() {
+    if (this._isOver !== "") return;
+    console.log(this._revealCount, this._row * this._col - this._totalBombs);
+    if (this._revealCount === this._row * this._col - this._totalBombs)
+      this._isOver = "won";
+  }
   private revealEmpty(position: { row: number; col: number }) {
     const vis = init2dArray(false, { row: this._row, col: this._col });
     const q = new Queue<{ row: number; col: number }>();
@@ -101,6 +111,8 @@ class Minesweeper {
           continue;
         (vis[curPos.row] as boolean[])[curPos.col] = true;
         (this._boardtiles[curPos.row] as tile[])[curPos.col] = "revealed";
+        this._revealCount++;
+        console.log("revealed");
         if ((this._board[curPos.row] as piece[])[curPos.col] === 0) {
           surroudingPos.forEach((dif, i) => {
             q.push({ row: curPos.row + dif.row, col: curPos.col + dif.col });
@@ -112,7 +124,7 @@ class Minesweeper {
   reset() {
     this._board = init2dArray(0, { row: this._row, col: this._col });
     this._boardtiles = init2dArray("none", { row: this._row, col: this._col });
-    this._isOver = false;
+    this._isOver = "";
     this._isinit = false;
   }
   reveal({ row, col }: { row: number; col: number }) {
@@ -126,8 +138,9 @@ class Minesweeper {
     } else if ((this._board[row] as piece[])[col] !== 9) {
       this.revealEmpty({ row, col });
     } else {
-      this._isOver = true;
+      this._isOver = "lose";
     }
+    this.updateOver();
   }
   flag({ row, col }: { row: number; col: number }) {
     if ((this._boardtiles[row] as tile[])[col] === "flag") {
@@ -155,16 +168,15 @@ class Minesweeper {
         row: Math.floor(Math.random() * (row - 1)),
         col: Math.floor(Math.random() * (col ? col : 0 - 1)),
       };
+      if (checksurrounding({ position, clickLoc })) continue;
       const Row = board[position.row] as piece[];
 
-      if (
-        Row[position.col] !== 9 &&
-        !checksurrounding({ position, clickLoc })
-      ) {
+      if (Row[position.col] !== 9) {
+        console.log(position);
         Row[position.col] = 9;
         count++;
+        console.log(count);
       }
-      // console.log(count);
     }
     return board;
   }
