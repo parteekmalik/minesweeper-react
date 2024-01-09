@@ -1,4 +1,4 @@
-import Queue from "../helper/queue";
+import Queue from "./queue";
 
 export type piece = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type tile = "none" | "flag" | "revealed" | "minered";
@@ -19,6 +19,35 @@ function init2dArray<T>(
   }
 
   return board;
+}
+function abs(x: number) {
+  if (x < 0) return x * -1;
+  return x;
+}
+function checksurrounding({
+  clickLoc,
+  position,
+}: {
+  clickLoc: { row: number; col: number };
+  position: { row: number; col: number };
+}) {
+  if (
+    abs(clickLoc.row - position.row) > 2 ||
+    abs(clickLoc.col - position.col) > 2
+  )
+    return false;
+
+  const checkin = [clickLoc];
+  surroudingPos.forEach((dif, i) => {
+    checkin.push({ row: clickLoc.row + dif.row, col: clickLoc.col + dif.col });
+  });
+
+  let found = false;
+  checkin.forEach((pos) => {
+    if (pos.row === position.row && pos.col === position.col) found = true;
+  });
+
+  return found;
 }
 const surroudingPos = [
   { row: 0, col: -1 },
@@ -80,7 +109,14 @@ class Minesweeper {
       }
     }
   }
+  reset() {
+    this._board = init2dArray(0, { row: this._row, col: this._col });
+    this._boardtiles = init2dArray("none", { row: this._row, col: this._col });
+    this._isOver = false;
+    this._isinit = false;
+  }
   reveal({ row, col }: { row: number; col: number }) {
+    console.log(this);
     if (this._isinit === false) {
       this.generate({ row, col });
       this._isinit = true;
@@ -120,10 +156,10 @@ class Minesweeper {
         col: Math.floor(Math.random() * (col ? col : 0 - 1)),
       };
       const Row = board[position.row] as piece[];
+
       if (
         Row[position.col] !== 9 &&
-        clickLoc.row !== position.row &&
-        clickLoc.col !== position.col
+        !checksurrounding({ position, clickLoc })
       ) {
         Row[position.col] = 9;
         count++;
@@ -136,7 +172,7 @@ class Minesweeper {
   private genrateBombCount(board: piece[][]): piece[][] {
     board.forEach((Row, row) => {
       Row.forEach((val, col) => {
-        console.log("row-col ->", row + "," + col);
+        // console.log("row-col ->", row + "," + col);
         if (val !== 9) return;
         surroudingPos.forEach((dif) => {
           const newCol = col + dif.col;
