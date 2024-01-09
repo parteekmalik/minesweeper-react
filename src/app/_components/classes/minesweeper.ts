@@ -93,7 +93,6 @@ class Minesweeper {
   }
   private updateOver() {
     if (this._isOver !== "") return;
-    console.log(this._revealCount, this._row * this._col - this._totalBombs);
     if (this._revealCount === this._row * this._col - this._totalBombs)
       this._isOver = "won";
   }
@@ -112,7 +111,6 @@ class Minesweeper {
         (vis[curPos.row] as boolean[])[curPos.col] = true;
         (this._boardtiles[curPos.row] as tile[])[curPos.col] = "revealed";
         this._revealCount++;
-        console.log("revealed");
         if ((this._board[curPos.row] as piece[])[curPos.col] === 0) {
           surroudingPos.forEach((dif, i) => {
             q.push({ row: curPos.row + dif.row, col: curPos.col + dif.col });
@@ -128,7 +126,6 @@ class Minesweeper {
     this._isinit = false;
   }
   reveal({ row, col }: { row: number; col: number }) {
-    console.log(this);
     if (this._isinit === false) {
       this.generate({ row, col });
       this._isinit = true;
@@ -172,10 +169,8 @@ class Minesweeper {
       const Row = board[position.row] as piece[];
 
       if (Row[position.col] !== 9) {
-        console.log(position);
         Row[position.col] = 9;
         count++;
-        console.log(count);
       }
     }
     return board;
@@ -184,13 +179,11 @@ class Minesweeper {
   private genrateBombCount(board: piece[][]): piece[][] {
     board.forEach((Row, row) => {
       Row.forEach((val, col) => {
-        // console.log("row-col ->", row + "," + col);
         if (val !== 9) return;
         surroudingPos.forEach((dif) => {
           const newCol = col + dif.col;
           const newRow = row + dif.row;
           if (!this.isValidPoition({ row: newRow, col: newCol })) return;
-          // console.log(newRow, newCol);
           const Row = board[newRow] as piece[];
           if (Row[newCol] !== 9) Row[newCol]++;
         });
