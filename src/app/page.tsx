@@ -10,7 +10,7 @@ export default async function Home() {
   const session = await getServerAuthSession();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center ">
+    <main className="flex grow flex-col items-center justify-center ">
       <Game></Game>
     </main>
   );

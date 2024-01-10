@@ -1,3 +1,4 @@
+import moment from "moment";
 import Queue from "./queue";
 
 export type piece = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -68,6 +69,8 @@ class Minesweeper {
   private _isOver: "" | "won" | "lose" = "";
   private _isinit = false;
   private _revealCount = 0;
+  private _flagCount = 0;
+  private _startedTime = moment().toDate();
   constructor({
     row,
     col,
@@ -87,6 +90,9 @@ class Minesweeper {
     this._board = this.genrateBombCount(
       this.populateBomb(this._totalBombs, { row, col }),
     );
+  }
+  flagLeft() {
+    return this._totalBombs - this._flagCount;
   }
   isOver() {
     return this._isOver;
@@ -124,14 +130,20 @@ class Minesweeper {
     this._boardtiles = init2dArray("none", { row: this._row, col: this._col });
     this._isOver = "";
     this._isinit = false;
+    this._startedTime = moment().toDate();
+  }
+  startTime() {
+    return this._startedTime;
   }
   reveal({ row, col }: { row: number; col: number }) {
     if (this._isinit === false) {
       this.generate({ row, col });
+      this._startedTime = moment().toDate();
       this._isinit = true;
     }
     if ((this._boardtiles[row] as tile[])[col] === "flag") {
       (this._boardtiles[row] as tile[])[col] = "none";
+      this._flagCount--;
     } else if ((this._board[row] as piece[])[col] !== 9) {
       this.revealEmpty({ row, col });
     } else {
@@ -142,7 +154,11 @@ class Minesweeper {
   flag({ row, col }: { row: number; col: number }) {
     if ((this._boardtiles[row] as tile[])[col] === "flag") {
       (this._boardtiles[row] as tile[])[col] = "none";
-    } else (this._boardtiles[row] as tile[])[col] = "flag";
+      this._flagCount--;
+    } else {
+      (this._boardtiles[row] as tile[])[col] = "flag";
+      this._flagCount++;
+    }
   }
   board(): piece[][] {
     return this._board;

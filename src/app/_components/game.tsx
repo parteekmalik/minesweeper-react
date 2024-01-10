@@ -5,6 +5,8 @@ import Minesweeper, { piece, tile } from "./classes/minesweeper";
 import { checkForValidClick } from "./helper/getPos";
 import _ from "lodash";
 import BoardPieces from "./boardPieces";
+import DisplayNumber from "./displayNumber";
+import moment from "moment";
 
 function Game() {
   const [game, setGame] = useState(
@@ -28,7 +30,13 @@ function Game() {
     console.log(row, col);
   }
   const [clickdown, setclickdown] = useState(false);
-
+  const [time, setTime] = useState(0);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTime(moment().toDate().getTime());
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <div
       className="flex select-none flex-col"
@@ -47,25 +55,39 @@ function Game() {
         })}
         <div className="h-[10px] w-[10px] bg-[url('/borders/cornertopright.png')]" />
       </div>
-      <div className="flex">
-        <div className="h-[30px] w-[10px] bg-[url('/borders/boarder.png')]" />
-        <div className="grow bg-[#b7b7b7]  ">
-          <div className="flex h-full items-center justify-center">
-            <div
-              className={`h-[26px] w-[26px] ${
-                clickdown
-                  ? "bg-[url('/mine/click.PNG')]"
-                  : "bg-[url('/mine/happy.PNG')]"
-              }`}
-              onMouseUp={(e) => {
-                const Game = _.cloneDeep(game);
-                Game.reset();
-                setGame(Game);
-              }}
-            />
+      <div className="flex bg-[#b7b7b7]  ">
+        <img
+          draggable={false}
+          src="/borders/boarder.png"
+          className="h-full w-[10px]"
+        />
+        <div className="flex w-full p-2 ">
+          <DisplayNumber
+            time={
+              game.flagLeft() < 0 || game.flagLeft() > 999 ? 0 : game.flagLeft()
+            }
+          />
+          <div className="grow  ">
+            <div className="flex h-full items-center justify-center">
+              <img
+                draggable={false}
+                className={`$ h-full`}
+                src={clickdown ? "/mine/click.PNG" : "/mine/happy.PNG"}
+                onMouseUp={(e) => {
+                  const Game = _.cloneDeep(game);
+                  Game.reset();
+                  setGame(Game);
+                }}
+              />
+            </div>
           </div>
+          <DisplayNumber time={Math.floor((moment().toDate().getTime() - game.startTime().getTime()) / 1000)} />
         </div>
-        <div className="h-[30px] w-[10px] bg-[url('/borders/boarder.png')]" />
+        <img
+          draggable={false}
+          src="/borders/boarder.png"
+          className="h-full w-[10px]"
+        />
       </div>
       <div className="flex ">
         <div className="h-[10px] w-[10px] bg-[url('/borders/cornermidleft.png')]" />
