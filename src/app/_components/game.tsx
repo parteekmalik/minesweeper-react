@@ -12,9 +12,20 @@ function Game() {
   const [game, setGame] = useState(
     new Minesweeper({ row: 20, col: 30, bombs: 10 }),
   );
+  const [clickdown, setclickdown] = useState(false);
+  const [time, setTime] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTime(moment().toDate().getTime());
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
+
   useEffect(() => {
     console.log(game);
   }, [game]);
+
   function clickHandle(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     e.preventDefault();
     const { row, col } = checkForValidClick(e);
@@ -29,14 +40,6 @@ function Game() {
     setGame(Game);
     console.log(row, col);
   }
-  const [clickdown, setclickdown] = useState(false);
-  const [time, setTime] = useState(0);
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTime(moment().toDate().getTime());
-    }, 1000);
-    return () => clearInterval(intervalId);
-  }, []);
   return (
     <div
       className="flex select-none flex-col"
@@ -81,7 +84,11 @@ function Game() {
               />
             </div>
           </div>
-          <DisplayNumber time={Math.floor((moment().toDate().getTime() - game.startTime().getTime()) / 1000)} />
+          <DisplayNumber
+            time={Math.floor(
+              (moment().toDate().getTime() - game.startTime().getTime()) / 1000,
+            )}
+          />
         </div>
         <img
           draggable={false}
