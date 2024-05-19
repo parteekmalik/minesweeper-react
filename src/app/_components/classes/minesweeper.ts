@@ -70,7 +70,7 @@ class Minesweeper {
   private _isinit = false;
   private _revealCount = 0;
   private _flagCount = 0;
-  private _startedTime = moment().toDate();
+  private _startedTime = 0;
   constructor({
     row,
     col,
@@ -130,7 +130,7 @@ class Minesweeper {
     this._boardtiles = init2dArray("none", { row: this._row, col: this._col });
     this._isOver = "";
     this._isinit = false;
-    this._startedTime = moment().toDate();
+    this._startedTime = 0;
   }
   startTime() {
     return this._startedTime;
@@ -138,7 +138,7 @@ class Minesweeper {
   reveal({ row, col }: { row: number; col: number }) {
     if (this._isinit === false) {
       this.generate({ row, col });
-      this._startedTime = moment().toDate();
+      this._startedTime = moment().toDate().getTime();
       this._isinit = true;
     }
     if ((this._boardtiles[row] as tile[])[col] === "flag") {
@@ -200,8 +200,8 @@ class Minesweeper {
           const newCol = col + dif.col;
           const newRow = row + dif.row;
           if (!this.isValidPoition({ row: newRow, col: newCol })) return;
-          const Row = board[newRow] as piece[];
-          if (Row[newCol] !== 9) Row[newCol]++;
+          let cell = board[newRow]?.[newCol];
+          if (cell !== 9 && board[newRow]?.[newCol]) board[newRow][newCol]++;
         });
       });
     });

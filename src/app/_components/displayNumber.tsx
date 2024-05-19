@@ -3,7 +3,6 @@ import moment from "moment";
 import React from "react";
 
 function DisplayNumber({ time }: { time: number }) {
-  console.log(time);
   if (time < 0 || time > 999) time = 0;
   return (
     <>

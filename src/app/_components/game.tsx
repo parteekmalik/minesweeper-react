@@ -86,7 +86,7 @@ function Game() {
           </div>
           <DisplayNumber
             time={Math.floor(
-              (moment().toDate().getTime() - game.startTime().getTime()) / 1000,
+              (moment().toDate().getTime() - game.startTime()) / 1000,
             )}
           />
         </div>
