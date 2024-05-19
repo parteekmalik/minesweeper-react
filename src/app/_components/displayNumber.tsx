@@ -5,7 +5,7 @@ import React from "react";
 function DisplayNumber({ time }: { time: number }) {
   if (time < 0 || time > 999) time = 0;
   return (
-    <>
+    <div className="flex">
       <img
         draggable={false}
         className="h-[46px] w-[26px] bg-contain"
@@ -21,7 +21,7 @@ function DisplayNumber({ time }: { time: number }) {
         className="h-[46px] w-[26px] bg-contain"
         src={"time/" + (time % 10) + ".PNG"}
       />
-    </>
+    </div>
   );
 }
 

@@ -13,8 +13,9 @@ function Game() {
     new Minesweeper({ row: 20, col: 30, bombs: 10 }),
   );
   const [clickdown, setclickdown] = useState(false);
-  const [time, setTime] = useState(0);
 
+  const [time, setTime] = useState(0);
+  // triggering react rerender
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTime(moment().toDate().getTime());
@@ -58,31 +59,29 @@ function Game() {
         })}
         <div className="h-[10px] w-[10px] bg-[url('/borders/cornertopright.png')]" />
       </div>
-      <div className="flex bg-[#b7b7b7]  ">
+      <div className="flex  bg-[#b7b7b7]  ">
         <img
           draggable={false}
           src="/borders/boarder.png"
           className="h-full w-[10px]"
         />
-        <div className="flex w-full p-2 ">
+        <div className="flex w-full justify-between p-2 ">
           <DisplayNumber
             time={
               game.flagLeft() < 0 || game.flagLeft() > 999 ? 0 : game.flagLeft()
             }
           />
-          <div className="grow  ">
-            <div className="flex h-full items-center justify-center">
-              <img
-                draggable={false}
-                className={`$ h-full`}
-                src={clickdown ? "/mine/click.PNG" : "/mine/happy.PNG"}
-                onMouseUp={(e) => {
-                  const Game = _.cloneDeep(game);
-                  Game.reset();
-                  setGame(Game);
-                }}
-              />
-            </div>
+          <div className="flex h-full items-center justify-center">
+            <img
+              draggable={false}
+              className={`$ h-full`}
+              src={clickdown ? "/mine/click.PNG" : "/mine/happy.PNG"}
+              onMouseUp={(e) => {
+                const Game = _.cloneDeep(game);
+                Game.reset();
+                setGame(Game);
+              }}
+            />
           </div>
           <DisplayNumber
             time={Math.floor(
