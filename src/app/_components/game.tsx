@@ -30,7 +30,7 @@ function Game() {
     e.preventDefault();
     const { row, col } = checkForValidClick(e);
     console.log(e.nativeEvent.button);
-    if (((game.boardtile()[row] ?? []) )[col] === "revealed") return;
+    if ((game.boardtile()[row] ?? [])[col] === "revealed") return;
     const Game = _.cloneDeep(game);
     if (e.nativeEvent.button === 0) {
       Game.reveal({ row, col });
@@ -48,7 +48,7 @@ function Game() {
       {game.isOver()}
       <div className="flex ">
         <div className="h-[10px] w-[10px] bg-[url('/borders/cornertopleft.png')]" />
-        {Array(game.board()[0]?.length).map((_, i) => {
+        {game.board()[0]!.map((_, i) => {
           return (
             <div
               className="h-[10px] w-[20px] bg-[url('/borders/boarderflat.png')]"
@@ -98,7 +98,7 @@ function Game() {
       </div>
       <div className="flex ">
         <div className="h-[10px] w-[10px] bg-[url('/borders/cornermidleft.png')]" />
-        {Array(game.board()[0]?.length).map((_, i) => {
+        {game.board()[0]!.map((_, i) => {
           return (
             <div
               className="h-[10px] w-[20px] bg-[url('/borders/boarderflat.png')]"
@@ -138,7 +138,7 @@ function Game() {
       </div>
       <div className="flex ">
         <div className="h-[10px] w-[10px] bg-[url('/borders/cornerdownleft.png')]" />
-        {Array(game.board()[0]?.length).map((_, i) => {
+        {game.board()[0]!.map((_, i) => {
           return (
             <div
               className="h-[10px] w-[20px] bg-[url('/borders/boarderflat.png')] "
