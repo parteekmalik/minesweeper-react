@@ -35,7 +35,7 @@ function BoardPieces(props: {
                   }
                 }
               }
-              const imageURL = getIMGURL((boardtile[y] as tile[])[x] as tile);
+              const imageURL = getIMGURL(boardtile[y]![x]!);
               return (
                 <div
                   className="h-[20px] w-[20px]"

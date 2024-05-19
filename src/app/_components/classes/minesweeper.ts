@@ -63,7 +63,7 @@ const surroudingPos = [
 class Minesweeper {
   private _board: piece[][] = [];
   private _boardtiles: tile[][] = [];
-  private _totalBombs: number = 0;
+  private _totalBombs = 0;
   private _row = 0;
   private _col = 0;
   private _isOver: "" | "won" | "lose" = "";
@@ -87,9 +87,7 @@ class Minesweeper {
     this._boardtiles = init2dArray("none", { row, col });
   }
   private generate({ row, col }: { row: number; col: number }) {
-    this._board = this.genrateBombCount(
-      this.populateBomb(this._totalBombs, { row, col }),
-    );
+    this._board = this.populateBomb(this._totalBombs, { row, col });
   }
   flagLeft() {
     return this._totalBombs - this._flagCount;
@@ -109,15 +107,12 @@ class Minesweeper {
     while (!q.isEmpty()) {
       const curPos = q.pop();
       if (curPos) {
-        if (
-          !this.isValidPoition(curPos) ||
-          (vis[curPos.row] as boolean[])[curPos.col]
-        )
+        if (!this.isValidPoition(curPos) || vis[curPos.row]![curPos.col]!)
           continue;
-        (vis[curPos.row] as boolean[])[curPos.col] = true;
-        (this._boardtiles[curPos.row] as tile[])[curPos.col] = "revealed";
+        vis[curPos.row]![curPos.col] = true;
+        this._boardtiles[curPos.row]![curPos.col] = "revealed";
         this._revealCount++;
-        if ((this._board[curPos.row] as piece[])[curPos.col] === 0) {
+        if (this._board[curPos.row]![curPos.col] === 0) {
           surroudingPos.forEach((dif, i) => {
             q.push({ row: curPos.row + dif.row, col: curPos.col + dif.col });
           });
@@ -141,10 +136,10 @@ class Minesweeper {
       this._startedTime = moment().toDate().getTime();
       this._isinit = true;
     }
-    if ((this._boardtiles[row] as tile[])[col] === "flag") {
-      (this._boardtiles[row] as tile[])[col] = "none";
+    if (this._boardtiles[row]![col] === "flag") {
+      this._boardtiles[row]![col] = "none";
       this._flagCount--;
-    } else if ((this._board[row] as piece[])[col] !== 9) {
+    } else if (this._board[row]![col] !== 9) {
       this.revealEmpty({ row, col });
     } else {
       this._isOver = "lose";
@@ -152,11 +147,11 @@ class Minesweeper {
     this.updateOver();
   }
   flag({ row, col }: { row: number; col: number }) {
-    if ((this._boardtiles[row] as tile[])[col] === "flag") {
-      (this._boardtiles[row] as tile[])[col] = "none";
+    if (this._boardtiles[row]![col] === "flag") {
+      this._boardtiles[row]![col] = "none";
       this._flagCount--;
     } else {
-      (this._boardtiles[row] as tile[])[col] = "flag";
+      this._boardtiles[row]![col] = "flag";
       this._flagCount++;
     }
   }
@@ -182,29 +177,24 @@ class Minesweeper {
         col: Math.floor(Math.random() * (col ? col : 0 - 1)),
       };
       if (checksurrounding({ position, clickLoc })) continue;
-      const Row = board[position.row] as piece[];
 
-      if (Row[position.col] !== 9) {
-        Row[position.col] = 9;
+      if (board[position.row]![position.col] !== 9) {
+        board[position.row]![position.col] = 9;
         count++;
+
+        surroudingPos.forEach((dif) => {
+          const newCol = position.col + dif.col;
+          const newRow = position.row + dif.row;
+          if (
+            this.isValidPoition({ row: newRow, col: newCol }) &&
+            board[newRow]![newCol] !== 9 //eslint-ignore
+          ) {
+            board[newRow]![newCol] = ((board[newRow]?.[newCol] ?? 0) +
+              1) as piece; //eslint-ignore
+          }
+        });
       }
     }
-    return board;
-  }
-
-  private genrateBombCount(board: piece[][]): piece[][] {
-    board.forEach((Row, row) => {
-      Row.forEach((val, col) => {
-        if (val !== 9) return;
-        surroudingPos.forEach((dif) => {
-          const newCol = col + dif.col;
-          const newRow = row + dif.row;
-          if (!this.isValidPoition({ row: newRow, col: newCol })) return;
-          let cell = board[newRow]?.[newCol];
-          if (cell !== 9 && board[newRow]?.[newCol]) board[newRow][newCol]++;
-        });
-      });
-    });
     return board;
   }
   isValidPoition({ row, col }: { row: number; col: number }) {
